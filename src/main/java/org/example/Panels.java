@@ -15,9 +15,6 @@ public class Panels extends JPanel {
         this.setBorder(BorderFactory.createEmptyBorder(30,30,10,30)); //Ustawia marginesy góra, lewo, dół, prawo
         this.setLayout(null); //ustawia rozmieszczenie elementów na ekranie, argumenty - wiersze, kolumny
     }
-    public void addChat(JTextArea chatArea){
-        chatArea.setBounds(30,30,400,300);
-        this.add(chatArea); // dodaje chat do panelu
-    }
+
 
 }
