@@ -8,15 +8,14 @@ import java.awt.*;
 public class GUI {
 
     JFrame frame = new JFrame(); //Tworzy okno
-    Panels panel = new Panels();
+    JPanel mainPanel = new JPanel();
     Chat chat = new Chat();
 
     public GUI(){
-        Initalize_Window();
-        panel.addChat(chat.createChat());
-        frame.add(panel);
-        panel.setUpPanel();
-        frame.setVisible(true);
+
+        Initalize_Window();  // Tworzenie okna
+        chat.createChatArea();
+        frame.add(chat.getChatPanel());
 
     }
 
@@ -28,9 +27,12 @@ public class GUI {
         int x = (int) ((screenSize.getWidth() - frame.getWidth()) / 2);
         int y = (int) ((screenSize.getHeight() - frame.getHeight()) / 2);
         frame.setLocation(x, y); // ustawia lokalizacje okna na x i y (w tym przypadku na środku)
-        frame.setVisible(true);
         frame.setTitle("ChatRoom");  //nazwa okna
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Bez tego okno sie nie zamyka ,,X"
+        frame.setResizable(false);
+
+        frame.setVisible(true);
+
     }
 
 }
