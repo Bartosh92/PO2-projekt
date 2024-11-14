@@ -17,9 +17,9 @@ public class Rooms {
         this.room_main_panel = new JPanel();
         this.room_main_panel.setLayout(new BorderLayout());
         this.room_main_panel.setPreferredSize(new Dimension(300, 760));
-        this.room_main_panel.setBackground(new Color(85, 39, 227)); //Ustawia kolor tła
+        this.room_main_panel.setBackground(new Color(132, 175, 245)); //Ustawia kolor tła
 
-        this.border = BorderFactory.createMatteBorder(0, 2, 0, 0, Color.BLACK);
+        this.border = BorderFactory.createMatteBorder(0, 2, 0, 0, new Color(69, 140, 255));
         this.room_main_panel.setBorder(border);
     }
 

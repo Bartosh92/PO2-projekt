@@ -12,6 +12,7 @@ public class GUI {
     Users_online users_online = new Users_online();
     Rooms rooms = new Rooms();
 
+
     public GUI(){
         Initalize_Window();  // Tworzenie okna
         mainPanel.setLayout(new BorderLayout()); // Ustawienie layoutu dla mainPanel
