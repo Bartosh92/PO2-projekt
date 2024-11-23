@@ -11,8 +11,10 @@ public class Chat {
     private JTextArea MessageArea = new JTextArea();
     private JPanel chat_panel = new JPanel(); //Główny panel chatu, w którym znajdują się pozostałe obiekty
     private JPanel message_panel = new JPanel(); // Panel w którym znajduje się obszar wyświetlanych wiadomości
+    private Client client;
 
-    public Chat(){
+    public Chat(Client client){
+        this.client = client;
         createChatArea();
         createMessagePanel();
         createChatPanel();
@@ -30,9 +32,13 @@ public class Chat {
         this.chatArea.setFont(new Font("Serif", Font.PLAIN, 22));
         this.chatArea.setBackground(new Color(	249, 234, 225));
 
-        // Rejestracja EventHandling jako nasłuchiwacza zdarzeń klawiatury
-        KeyboardHandling eventHandling = new KeyboardHandling(this);
+        // Rejestracja KeyboardHandling jako nasłuchiwacza
+        KeyboardHandling eventHandling = new KeyboardHandling(client); // Przekazujemy obiekt Client
         this.chatArea.addKeyListener(eventHandling);
+
+        // Rejestracja EventHandling jako nasłuchiwacza zdarzeń klawiatury
+        //KeyboardHandling eventHandling = new KeyboardHandling(this);
+        //this.chatArea.addKeyListener(eventHandling);
     }
 
 
@@ -63,14 +69,7 @@ public class Chat {
         this.chat_panel.add(new JScrollPane(this.chatArea), BorderLayout.CENTER);
     }
 
-    // Metoda odpowiadająca za przekazanie wiadomości do chatArea
-    public void sendMessage(){
-        String message = getMessage();
-        if(!message.isEmpty()){
-            MessageArea.append(message + "\n");
-            chatArea.setText("");
-        }
-    }
+
 
 
 
@@ -78,6 +77,16 @@ public class Chat {
     public JPanel getChatPanel()
     {
         return this.chat_panel;
+    }
+
+    //Metoda zwracająca ChatArea
+    public JTextArea getChatArea(){
+        return this.chatArea;
+    }
+
+    //Metoda zwracająca MessageArea
+    public JTextArea getMessageArea(){
+        return this.MessageArea;
     }
 
     //Metoda zwracająca tekst znajdujący się w MessageArea
@@ -90,6 +99,8 @@ public class Chat {
         this.chat_panel.revalidate();
         this.chat_panel.repaint();
     }
+
+
 
 
 }
