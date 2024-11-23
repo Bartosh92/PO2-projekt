@@ -15,7 +15,7 @@ public class Server  implements Runnable{
     private ServerSocket server; //Soket serwera
     private ArrayList<ClientHandler> connections; //Lista połaczonych klinetow
     private boolean isRunning; //Flaga infromująca dzialaniu serwera
-    private ExecutorService pool;
+    private ExecutorService pool; // Odpowiada za tworzenie watkow
 
     public Server(){
         connections = new ArrayList<ClientHandler>();
