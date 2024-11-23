@@ -12,25 +12,27 @@ import java.util.concurrent.Executors;
 
 public class Server  implements Runnable{
 
-    private ServerSocket server;
-    private ArrayList<ConnectionHandler> connections;
-    private boolean done;
+    private ServerSocket server; //Soket serwera
+    private ArrayList<ClientHandler> connections; //Lista połaczonych klinetow
+    private boolean isRunning; //Flaga infromująca dzialaniu serwera
     private ExecutorService pool;
 
     public Server(){
-        connections = new ArrayList<ConnectionHandler>();
-        done = false;
+        connections = new ArrayList<ClientHandler>();
+        isRunning = true;
     }
 
+
+    //Metoda wwywolujaca sie w osobnym watku
     @Override
     public void run() {
         try {
-            server = new ServerSocket(9999); //Tworzy gniazdo serwera na porcie 9999
+            server = new ServerSocket(5000 ); //Tworzy gniazdo serwera na porcie 3333
             pool = Executors.newCachedThreadPool(); //Tworzy pulę wątków
 
-            while (!done) {
+            while (isRunning) {
                 Socket client = server.accept(); //Czeka na połączenie od klienta
-                ConnectionHandler handler = new ConnectionHandler(client); //Tworzy nowego handlera
+                ClientHandler handler = new ClientHandler(client); //Tworzy nowy obiekt obslugujacy klienta
                 connections.add(handler); //Dodaje handler do listy połączeń
                 pool.execute(handler); //Uruchamia handler w osobnym wątku
             }
@@ -39,62 +41,64 @@ public class Server  implements Runnable{
         }
     }
 
-    public void broadcast(String message) {
-        for (ConnectionHandler handler : connections) {
+
+
+    //Metoda zatrzymujaca dzialanie serwera
+    public void shutDown(){
+        try {
+            isRunning = false; //Zatrzymuje serwer
+            if (!server.isClosed()) {
+                server.close(); //Zamyka gniazdo serwera
+            }
+            for (ClientHandler handler : connections) {
+                handler.shutdown(); //Zamyka wszystkie połączenia z klientami
+            }
+        } catch (IOException e) {
+        }
+    }
+
+    //Metoda wyowołująca funkcję sendMessage dla każego połączonego klienta
+    public void sendToAllClients(String message) {
+        for (ClientHandler handler : connections) {
             if (handler != null) {
                 handler.sendMessage(message); //Wysyła wiadomość do każdego połączonego klienta
             }
         }
     }
 
-    public void shutDown(){
-        try {
-            done = true; //Zatrzymuje serwer
-            if (!server.isClosed()) {
-                server.close(); //Zamyka gniazdo serwera
-            }
-            for (ConnectionHandler handler : connections) {
-                handler.shutdown(); //Zamyka wszystkie połączenia z klientami
-            }
-        } catch (IOException e) {
-            //
-        }
-    }
 
+    //Klasa obslugujaca klienta
+    class ClientHandler implements Runnable{
 
-
-    class ConnectionHandler implements Runnable{
-
-        private Socket client;
+        private Socket client; //gniazdo klienta
         private BufferedReader in; //Pobiera informacje przekazane przez proces (od klienta)
         private PrintWriter out; //Wysyła informacje do procesu (do klienta)
-        private String nickname;
+        private String nick; //Pseudonim klienta
 
-        public ConnectionHandler(Socket client)
+        public ClientHandler(Socket client)
         {
             this.client = client;
         }
 
         @Override
         public void run() {
+
             try {
-                out = new PrintWriter(client.getOutputStream(), true); //Inicjalizacja PrintWriter
                 in = new BufferedReader(new InputStreamReader(client.getInputStream())); //Inicjalizacja BufferedReader
-                out.println("Please enter a nickname: "); //Prośba o nick
-                nickname = in.readLine(); //Pobieranie nicku od klienta
-                System.out.println(nickname + " connected!");
-                broadcast(nickname + " joined the chat!"); //Informowanie o dołączeniu klienta
+                out = new PrintWriter(client.getOutputStream(), true); //Inicjalizacja PrintWriter
+                out.println("Prosze wprowadzic swoj pseudonim: "); //Prośba o nick
+                nick = in.readLine(); //Pobieranie nicku od klienta
+                System.out.println(nick + " polaczyl sie!");
+                sendToAllClients(nick + " dolaczyl do pokoju!"); //Informowanie o dołączeniu klienta
                 String message;
                 while ((message = in.readLine()) != null) { //Czekanie na wiadomości
-                    if (message.startsWith("/nick")) {
-                        //Obsługuje zmianę nicku
-                    } else if (message.startsWith("/quit")) {
+                    if (message.startsWith("/exit")) {
                         //Obsługuje zakończenie połączenia
-                        broadcast(nickname + " left the chat!");
+                        sendToAllClients(nick + " opuscil pokoj!");
                         shutDown();
                     } else {
                         //Przesyła wiadomość do wszystkich klientów
-                        broadcast(nickname + ": " + message);
+                        sendToAllClients(nick + ": " + message);
                     }
                 }
             } catch (IOException e) {
@@ -114,7 +118,7 @@ public class Server  implements Runnable{
                     client.close(); //Zamyka połączenie
                 }
             } catch (IOException e) {
-                //
+                e.printStackTrace();
             }
         }
     }

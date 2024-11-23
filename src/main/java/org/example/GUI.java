@@ -8,12 +8,13 @@ public class GUI {
 
     JFrame frame = new JFrame(); //Tworzy okno
     JPanel mainPanel = new JPanel();
-    Chat chat = new Chat();
+    Chat chat;
     Users_online users_online = new Users_online();
     Rooms rooms = new Rooms();
 
 
-    public GUI(){
+    public GUI(Client client){
+        chat = new Chat(client);
         Initalize_Window();  // Tworzenie okna
         mainPanel.setLayout(new BorderLayout()); // Ustawienie layoutu dla mainPanel
         mainPanel.add(users_online.get_panel(), BorderLayout.WEST); // Panel użytkowników po lewej
@@ -35,5 +36,23 @@ public class GUI {
         frame.setResizable(false);
         frame.setVisible(true);
     }
+
+
+
+    //Metoda zwracająca chat
+    public Chat getChat(){
+        return chat;
+    }
+
+    //Metoda zamykajaca okno
+    public void closeGui()
+    {
+        frame.setVisible(false);
+        frame.dispose();
+    }
+
+
+
+
 
 }

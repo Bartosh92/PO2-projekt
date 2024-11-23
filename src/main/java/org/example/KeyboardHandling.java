@@ -4,26 +4,25 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class KeyboardHandling implements KeyListener {
-    private Chat chat;
+    private Client client;
 
-    // Konstruktor przyjmujący obiekt Chat
-    public KeyboardHandling(Chat chat) {
-        this.chat = chat;
+    // Konstruktor przyjmujący obiekt Client
+    public KeyboardHandling(Client client) {
+        this.client = client;
     }
 
-
     @Override
-    public void keyPressed(KeyEvent e){
-        switch(e.getKeyCode()){
+    public void keyPressed(KeyEvent e) {
+        switch(e.getKeyCode()) {
             case KeyEvent.VK_ENTER:
-                chat.sendMessage();
+                client.sendMessageToServer(); // Wywołuje metodę wysyłającą wiadomość do serwera
+                break;
         }
     }
 
     @Override
-    public void keyReleased(KeyEvent e){}
+    public void keyReleased(KeyEvent e) {}
 
     @Override
-    public void keyTyped(KeyEvent e){}
-
+    public void keyTyped(KeyEvent e) {}
 }

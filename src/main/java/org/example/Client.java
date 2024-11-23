@@ -12,27 +12,37 @@ public class Client implements Runnable {
     private BufferedReader in;
     private PrintWriter out;
     private boolean done;
+    GUI gui;
 
 
 
     @Override
     public void run(){
         try{
-            Socket client = new Socket("127.0.0.1", 9999);
+            Socket client = new Socket("127.0.0.1", 5000 );
             out = new PrintWriter(client.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
-            InputHandler inHandler = new InputHandler();
-            Thread t = new Thread(inHandler);
-            t.start();
+            gui = new GUI(this); // Tworzymy obiekt GUI i przekazujemy Client
 
             String inMessage;
             while((inMessage = in.readLine()) != null){
                 System.out.println(inMessage);
+                gui.getChat().getMessageArea().append(inMessage + "\n");
             }
 
         }catch(IOException e){
             shutdown();
+        }
+    }
+
+
+
+    public void sendMessageToServer(){
+        String message = gui.getChat().getMessage(); // Pobiera wiadomość z Chatu
+        out.println(message);
+        if(!message.isEmpty()){
+            gui.getChat().getChatArea().setText("");
         }
     }
 
@@ -41,6 +51,7 @@ public class Client implements Runnable {
         try{
             in.close();
             out.close();
+            gui.closeGui();
             if(!client.isClosed()){
                 client.close();
             }
@@ -51,8 +62,6 @@ public class Client implements Runnable {
 
     class InputHandler implements Runnable{
 
-
-
         @Override
         public void run(){
 
@@ -61,19 +70,22 @@ public class Client implements Runnable {
                 while(!done)
                 {
                     String message = inReader.readLine();
-                    if(message.equals("/quit"))
-                    {
-                        inReader.close();
-                        shutdown();
-                    }else{
-                        out.println(message);
-                    }
+                    out.println(message);
+
                 }
             }catch(IOException e){
-                //TODO: handle
+                e.printStackTrace();
+                shutdown();
             }
         }
     }
+
+    //Metoda zwracająca gui
+    public GUI getGUI()
+    {
+        return this.gui;
+    }
+
 
     public static void main(String[] args) {
         Client client = new Client();
