@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class Server  implements Runnable{
     @Override
     public void run() {
         try {
-            server = new ServerSocket(5000 ); //Tworzy gniazdo serwera na porcie 3333
+            server = new ServerSocket(9999); //Tworzy gniazdo serwera na porcie 5000
             pool = Executors.newCachedThreadPool(); //Tworzy pulę wątków
 
             while (isRunning) {
