@@ -14,15 +14,15 @@ public class Users_online {
     }
 
     public void create_Users_online() {
-        this.users_online_panel = new JPanel();
+        // Tworzymy niestandardowy panel z gradientem
+        this.users_online_panel = new GradientPanel();
         this.users_online_panel.setPreferredSize(new Dimension(300, 760));
         this.users_online_panel.setLayout(new BorderLayout());
-        this.users_online_panel.setBackground(new Color(113, 71, 225)); // Fioletowe tło
 
         // Nagłówek
         this.users_online_title = new JLabel("Users Online", SwingConstants.CENTER); // Wyrównanie do środka
-        this.users_online_title.setForeground(Color.WHITE); // Kolor tekstu
-        this.users_online_title.setFont(new Font("Arial", Font.BOLD, 20)); // Gruba czcionka
+        this.users_online_title.setForeground(Color.BLACK); // Kolor tekstu
+        this.users_online_title.setFont(new Font("Arial", Font.BOLD, 24)); // Gruba czcionka
         this.users_online_title.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0)); // Marginesy
         this.users_online_panel.add(users_online_title, BorderLayout.NORTH); // Dodanie nagłówka na górze
 
@@ -39,5 +39,19 @@ public class Users_online {
 
     public JPanel get_panel() {
         return users_online_panel;
+    }
+
+    // Niestandardowy panel z gradientem
+    private static class GradientPanel extends JPanel {
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2d = (Graphics2D) g;
+            int width = getWidth();
+            int height = getHeight();
+            GradientPaint gradient = new GradientPaint(0, 0, new Color(189, 19, 59), width, height, new Color(71, 113, 225));
+            g2d.setPaint(gradient);
+            g2d.fillRect(0, 0, width, height);
+        }
     }
 }
