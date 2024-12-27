@@ -32,6 +32,7 @@ public class Client implements Runnable {
             }
 
         }catch(IOException e){
+            e.printStackTrace();
             shutdown();
         }
     }
@@ -47,17 +48,28 @@ public class Client implements Runnable {
     }
 
     public void shutdown(){
-        isRunning = false;
-        try{
-            in.close();
-            out.close();
-            gui.closeGui();
-            if(!client.isClosed()){
+        System.out.println("done...");
+        try {
+            if (in != null) {
+                System.out.println("in null");
+                in.close();
+            }
+            if (out != null) {
+                System.out.println("out null");
+                out.close();
+            }
+            if (gui != null) {
+                System.out.println("gui null");
+                gui.closeGui();
+            }
+            if (client != null && !client.isClosed()) {
+                System.out.println("client null i client.isCLoset null");
                 client.close();
             }
-        }catch(IOException e){
-            // ignore
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        isRunning = false;
     }
 
     class InputHandler implements Runnable{

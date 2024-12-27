@@ -32,7 +32,9 @@ public class Server  implements Runnable{
             pool = Executors.newCachedThreadPool(); //Tworzy pulę wątków
 
             while (isRunning) {
+                System.out.println("Czekam na połączenie...");
                 Socket client = server.accept(); //Czeka na połączenie od klienta
+                System.out.println("Połączono z: " + client.getInetAddress());
                 ClientHandler handler = new ClientHandler(client); //Tworzy nowy obiekt obslugujacy klienta
                 connections.add(handler); //Dodaje handler do listy połączeń
                 pool.execute(handler); //Uruchamia handler w osobnym wątku
