@@ -28,7 +28,7 @@ public class Server  implements Runnable{
     @Override
     public void run() {
         try {
-            server = new ServerSocket(9999); //Tworzy gniazdo serwera na porcie 5000
+            server = new ServerSocket(5000); //Tworzy gniazdo serwera na porcie 5000
             pool = Executors.newCachedThreadPool(); //Tworzy pulę wątków
 
             while (isRunning) {
