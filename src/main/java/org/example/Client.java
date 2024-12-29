@@ -13,17 +13,19 @@ public class Client implements Runnable {
     private PrintWriter out;
     private boolean isRunning;
     GUI gui;
+    Login login;
 
 
 
     @Override
     public void run(){
         try{
-            client = new Socket("192.168.56.1", 5000 );
+            client = new Socket("10.10.0.109", 9000 );
             out = new PrintWriter(client.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
             gui = new GUI(this); // Tworzymy obiekt GUI i przekazujemy Client
+            login = new Login();
 
             String inMessage;
             while((inMessage = in.readLine()) != null){
