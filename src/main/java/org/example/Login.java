@@ -13,10 +13,12 @@ public class Login {
     JPanel LoginLabelPanel = new JPanel();
     JLabel LoginLabel = new JLabel("Log in");
     JTextField login = new JTextField();
+    JPasswordField password = new JPasswordField();
 
     public Login() {
         Initalize_Window();
         CreateLoginChatArea();
+        CreatePasswordChatArea();
         CreateLoginPanel();
 
     }
@@ -72,16 +74,32 @@ public class Login {
 
         });
 
-        login.addFocusListener(new FocusListener() {
-            public void focusGained(FocusEvent e)
-            {
-                login.setText("Login");
+
+
+
+    }
+
+    public void CreatePasswordChatArea()
+    {
+        this.password.setPreferredSize(new Dimension(550, 30));
+        this.password.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        this.password.setForeground(Color.BLACK);
+        this.password.setBackground(Color.WHITE);
+        this.password.setEchoChar('*');
+        this.loginPanel.add(this.password, BorderLayout.CENTER);
+
+        this.password.addKeyListener(new KeyListener() {
+            public void keyTyped(KeyEvent e) {}
+            public void keyPressed(KeyEvent e) {
+                switch(e.getKeyCode()) {
+                    case KeyEvent.VK_ENTER:
+                        password.setText(" ");
+                }
             }
 
-            public void focusLost(FocusEvent e){}
+            public void keyReleased(KeyEvent e) {}
+
         });
-
-
 
     }
 
