@@ -2,27 +2,30 @@ package org.example;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class Login {
     JFrame loginFrame = new JFrame();
+    JPanel mainPanel = new JPanel();
     JPanel loginPanel = new JPanel();
     JPanel LoginLabelPanel = new JPanel();
+    JPanel PasswordPanel = new JPanel();
     JLabel LoginLabel = new JLabel("Log in");
     JTextField login = new JTextField();
     JPasswordField password = new JPasswordField();
 
     public Login() {
         Initalize_Window();
+        CreateLabel();
         CreateLoginChatArea();
         CreatePasswordChatArea();
-        CreateLoginPanel();
+        loginFrame.add(mainPanel);
+
 
     }
 
+    //Inicjalizacja i prametryzowacja okna i paneli
     public void Initalize_Window()
     {
         this.loginFrame.setSize(600,400);
@@ -35,29 +38,35 @@ public class Login {
         loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Bez tego okno się nie zamyka
         loginFrame.setResizable(false);
         loginFrame.setVisible(true);
-        loginFrame.add(loginPanel);
-        this.loginPanel.setBackground(Color.WHITE);
+        mainPanel.setBackground(new Color(45, 116, 224));
+
     }
 
-    //Tworzy glowny panel i etykiete
-    public void CreateLoginPanel()
+
+    //Funkcja tworzaca etykiete
+    public void CreateLabel()
     {
         this.LoginLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
         this.LoginLabel.setFont(this.LoginLabel.getFont().deriveFont(Font.BOLD, 20));
-        this.LoginLabel.setForeground(Color.BLACK);
+        this.LoginLabel.setForeground(new Color(219, 214, 61));
         this.LoginLabelPanel.add(this.LoginLabel);
-        this.loginFrame.add(this.LoginLabelPanel, BorderLayout.NORTH);
+        LoginLabelPanel.setBackground(new Color(45, 116, 224));
+        this.mainPanel.add(this.LoginLabelPanel, BorderLayout.NORTH);
+
     }
 
 
-
+    //Funkcja Tworzaca pole na login, dodaje obsluge klawisza enter
     public void CreateLoginChatArea(){
 
         this.login.setPreferredSize(new Dimension(550, 30));
         this.login.setFont(new Font("Tahoma", Font.PLAIN, 12));
         this.login.setForeground(Color.BLACK);
         this.login.setBackground(Color.WHITE);
-        this.loginPanel.add(this.login, BorderLayout.CENTER);
+        this.loginPanel.add(this.login);
+        this.loginPanel.setBackground(new Color(45, 116, 224));
+        this.mainPanel.add(this.loginPanel);
+
 
 
         //Obsluga klawisza enter
@@ -79,6 +88,7 @@ public class Login {
 
     }
 
+    //Funkcja Tworzaca pole na haslo, dodaje obsluge klawisza enter
     public void CreatePasswordChatArea()
     {
         this.password.setPreferredSize(new Dimension(550, 30));
@@ -86,7 +96,10 @@ public class Login {
         this.password.setForeground(Color.BLACK);
         this.password.setBackground(Color.WHITE);
         this.password.setEchoChar('*');
-        this.loginPanel.add(this.password, BorderLayout.CENTER);
+        this.PasswordPanel.add(this.password);
+        this.PasswordPanel.setBackground(new Color(45, 116, 224));
+
+        this.mainPanel.add(this.PasswordPanel);
 
         this.password.addKeyListener(new KeyListener() {
             public void keyTyped(KeyEvent e) {}
@@ -103,11 +116,6 @@ public class Login {
 
     }
 
-    public static void main(String[] args) {
-        Login login = new Login();
-
-
-    }
 
 
 
