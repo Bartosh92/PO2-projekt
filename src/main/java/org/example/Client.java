@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Client implements Runnable {
 
@@ -15,95 +17,58 @@ public class Client implements Runnable {
     GUI gui;
     Login login;
 
-
-
     @Override
-    public void run(){
-        try{
-            client = new Socket("10.10.0.109", 9000 );
+    public void run() {
+        try {
+            client = new Socket("localhost", 9000);
             out = new PrintWriter(client.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
-            gui = new GUI(this); // Tworzymy obiekt GUI i przekazujemy Client
+            gui = new GUI(this);
             login = new Login();
 
             String inMessage;
-            while((inMessage = in.readLine()) != null){
+            while ((inMessage = in.readLine()) != null) {
                 System.out.println(inMessage);
-                gui.getChat().getMessageArea().append(inMessage + "\n");
+                if (inMessage.startsWith("USERS_LIST:")) {
+                    String[] users = inMessage.substring(11).split(",");
+                    ArrayList<String> userList = new ArrayList<>(Arrays.asList(users));
+                    gui.users_online.setUsers(userList);
+                } else if (inMessage.endsWith("opuscil pokoj!")) {
+                    String userLeaving = inMessage.split(" ")[0];
+                    gui.users_online.removeUser(userLeaving);
+                } else {
+                    gui.getChat().getMessageArea().append(inMessage + "\n");
+                }
             }
-
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
             shutdown();
         }
     }
 
-
-
-    public void sendMessageToServer(){
-        String message = gui.getChat().getMessage(); // Pobiera wiadomość z Chatu
+    public void sendMessageToServer() {
+        String message = gui.getChat().getMessage();
         out.println(message);
-        if(!message.isEmpty()){
+        if (!message.isEmpty()) {
             gui.getChat().getChatArea().setText("");
         }
     }
 
-    public void shutdown(){
-        System.out.println("done...");
+    public void shutdown() {
         try {
-            if (in != null) {
-                System.out.println("in null");
-                in.close();
-            }
-            if (out != null) {
-                System.out.println("out null");
-                out.close();
-            }
-            if (gui != null) {
-                System.out.println("gui null");
-                gui.closeGui();
-            }
-            if (client != null && !client.isClosed()) {
-                System.out.println("client null i client.isCLoset null");
-                client.close();
-            }
+            if (in != null) in.close();
+            if (out != null) out.close();
+            if (gui != null) gui.closeGui();
+            if (client != null && !client.isClosed()) client.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
         isRunning = false;
     }
 
-    class InputHandler implements Runnable{
-
-        @Override
-        public void run(){
-
-            try{
-                BufferedReader inReader = new BufferedReader(new InputStreamReader(System.in));
-                while(isRunning)
-                {
-                    String message = inReader.readLine();
-                    out.println(message);
-
-                }
-            }catch(IOException e){
-                e.printStackTrace();
-                shutdown();
-            }
-        }
-    }
-
-    //Metoda zwracająca gui
-    public GUI getGUI()
-    {
-        return this.gui;
-    }
-
-
     public static void main(String[] args) {
         Client client = new Client();
         client.run();
     }
-
 }
