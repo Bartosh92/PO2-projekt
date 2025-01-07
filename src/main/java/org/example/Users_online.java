@@ -4,14 +4,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-// Modyfikacja klasy Users_online do dynamicznego dodawania użytkowników
 public class Users_online {
     private JPanel users_online_panel;
     private JLabel users_online_title;
     private DefaultListModel<String> usersListModel;
     private JList<String> usersList;
+    private Client client;
 
-    public Users_online() {
+    public Users_online(Client client) {
+        this.client = client;
         create_Users_online();
     }
 
