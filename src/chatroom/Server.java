@@ -10,112 +10,128 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class Server  implements Runnable{
+public class Server implements Runnable {
 
-    private ServerSocket server; //Soket serwera
-    private ArrayList<ClientHandler> connections; //Lista połaczonych klinetow
-    private boolean isRunning; //Flaga infromująca dzialaniu serwera
-    private ExecutorService pool; // Odpowiada za tworzenie watkow
+    private ServerSocket server;
+    private ArrayList<ClientHandler> connections;
+    private ArrayList<String> users;
+    private boolean isRunning;
+    private ExecutorService pool;
 
-    public Server(){
-        connections = new ArrayList<ClientHandler>();
+    public Server() {
+        connections = new ArrayList<>();
+        users = new ArrayList<>();
         isRunning = true;
     }
 
-
-    //Metoda wwywolujaca sie w osobnym watku
     @Override
     public void run() {
         try {
-            server = new ServerSocket(5000 ); //Tworzy gniazdo serwera na porcie 3333
-            pool = Executors.newCachedThreadPool(); //Tworzy pulę wątków
+            server = new ServerSocket(9000);
+            pool = Executors.newCachedThreadPool();
 
             while (isRunning) {
-                Socket client = server.accept(); //Czeka na połączenie od klienta
-                ClientHandler handler = new ClientHandler(client); //Tworzy nowy obiekt obslugujacy klienta
-                connections.add(handler); //Dodaje handler do listy połączeń
-                pool.execute(handler); //Uruchamia handler w osobnym wątku
+                System.out.println("Czekam na połączenie...");
+                Socket client = server.accept();
+                System.out.println("Połączono z: " + client.getInetAddress());
+                ClientHandler handler = new ClientHandler(client);
+                connections.add(handler);
+                pool.execute(handler);
             }
         } catch (Exception e) {
-            shutDown(); //Zamyka serwer w przypadku błędu
+            shutDown();
         }
     }
 
-
-
-    //Metoda zatrzymujaca dzialanie serwera
-    public void shutDown(){
+    public void shutDown() {
         try {
-            isRunning = false; //Zatrzymuje serwer
+            isRunning = false;
             if (!server.isClosed()) {
-                server.close(); //Zamyka gniazdo serwera
+                server.close();
             }
             for (ClientHandler handler : connections) {
-                handler.shutdown(); //Zamyka wszystkie połączenia z klientami
+                handler.shutdown();
             }
         } catch (IOException e) {
         }
     }
 
-    //Metoda wyowołująca funkcję sendMessage dla każego połączonego klienta
     public void sendToAllClients(String message) {
         for (ClientHandler handler : connections) {
             if (handler != null) {
-                handler.sendMessage(message); //Wysyła wiadomość do każdego połączonego klienta
+                handler.sendMessage(message);
             }
         }
     }
 
+    class ClientHandler implements Runnable {
 
-    //Klasa obslugujaca klienta
-    class ClientHandler implements Runnable{
+        private Socket client;
+        private BufferedReader in;
+        private PrintWriter out;
+        private String nick;
 
-        private Socket client; //gniazdo klienta
-        private BufferedReader in; //Pobiera informacje przekazane przez proces (od klienta)
-        private PrintWriter out; //Wysyła informacje do procesu (do klienta)
-        private String nick; //Pseudonim klienta
-
-        public ClientHandler(Socket client)
-        {
+        public ClientHandler(Socket client) {
             this.client = client;
         }
 
         @Override
         public void run() {
-
             try {
-                in = new BufferedReader(new InputStreamReader(client.getInputStream())); //Inicjalizacja BufferedReader
-                out = new PrintWriter(client.getOutputStream(), true); //Inicjalizacja PrintWriter
-                out.println("Prosze wprowadzic swoj pseudonim: "); //Prośba o nick
-                nick = in.readLine(); //Pobieranie nicku od klienta
+                in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+                out = new PrintWriter(client.getOutputStream(), true);
+                out.println("Prosze wprowadzic swoj pseudonim: ");
+                nick = in.readLine();
                 System.out.println(nick + " polaczyl sie!");
-                sendToAllClients(nick + " dolaczyl do pokoju!"); //Informowanie o dołączeniu klienta
+
+                synchronized (users) {
+                    users.add(nick);
+                    updateUsersOnline();
+                }
+
+                sendToAllClients(nick + " dolaczyl do pokoju!");
                 String message;
-                while ((message = in.readLine()) != null) { //Czekanie na wiadomości
+                while ((message = in.readLine()) != null) {
                     if (message.startsWith("/exit")) {
-                        //Obsługuje zakończenie połączenia
                         sendToAllClients(nick + " opuscil pokoj!");
-                        shutDown();
+                        synchronized (users) {
+                            users.remove(nick);
+                            updateUsersOnline();
+                        }
+                        sendToAllClients(nick + " opuścił czat.");
+                        shutdown();
                     } else {
-                        //Przesyła wiadomość do wszystkich klientów
                         sendToAllClients(nick + ": " + message);
                     }
                 }
             } catch (IOException e) {
+                synchronized (users) {
+                    users.remove(nick);
+                    updateUsersOnline();
+                }
+                sendToAllClients(nick + " opuścił czat.");
                 shutdown();
             }
         }
 
+        private void updateUsersOnline() {
+            StringBuilder userList = new StringBuilder("USERS_LIST:");
+            for (String user : users) {
+                userList.append(user).append(",");
+            }
+            sendToAllClients(userList.toString());
+        }
+
         public void sendMessage(String message) {
-            out.println(message); //Wysyła wiadomość do klienta
+            out.println(message);
         }
 
         public void shutdown() {
             try {
-                in.close(); //Zamyka strumień wejściowy
-                out.close(); //Zamyka strumień wyjściowy
+                in.close();
+                out.close();
                 if (!client.isClosed()) {
-                    client.close(); //Zamyka połączenie
+                    client.close();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -123,8 +139,8 @@ public class Server  implements Runnable{
         }
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         Server server = new Server();
-        server.run(); //Uruchamia serwer
+        server.run();
     }
 }
