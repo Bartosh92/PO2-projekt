@@ -24,7 +24,7 @@ public class Client implements Runnable {
             out = new PrintWriter(client.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
-            gui = new GUI(this);  // Przekazanie `Client` do GUI
+            gui = new GUI(this);
             login = new Login();
 
             String inMessage;
