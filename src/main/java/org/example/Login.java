@@ -2,121 +2,98 @@ package org.example;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 public class Login {
     JFrame loginFrame = new JFrame();
     JPanel mainPanel = new JPanel();
     JPanel loginPanel = new JPanel();
-    JPanel LoginLabelPanel = new JPanel();
-    JPanel PasswordPanel = new JPanel();
-    JLabel LoginLabel = new JLabel("Log in");
+    JPanel passwordPanel = new JPanel();
+    JPanel buttonPanel = new JPanel();
+    JPanel formPanel = new JPanel();
+
+    JLabel mainLabel = new JLabel("Logowanie");
+    JLabel loginLabel = new JLabel("Login:");
+    JLabel passwordLabel = new JLabel("Hasło:");
+
     JTextField login = new JTextField();
     JPasswordField password = new JPasswordField();
 
+    JButton loginButton = new JButton("Zaloguj");
+    JButton registerButton = new JButton("Zarejestruj");
+
     public Login() {
-        Initalize_Window();
-        CreateLabel();
-        CreateLoginChatArea();
-        CreatePasswordChatArea();
+        initializeWindow();
+        createMainLabel();
+        createForm();
+        createButtons();
         loginFrame.add(mainPanel);
-
-
     }
 
-    //Inicjalizacja i prametryzowacja okna i paneli
-    public void Initalize_Window()
-    {
-        this.loginFrame.setSize(600,400);
+    // Inicjalizacja i parametryzacja okna i paneli
+    public void initializeWindow() {
+        this.loginFrame.setSize(600, 400);
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = toolkit.getScreenSize();
         int x = (int) ((screenSize.getWidth() - loginFrame.getWidth()) / 2);
         int y = (int) ((screenSize.getHeight() - loginFrame.getHeight()) / 2);
         loginFrame.setLocation(x, y);
-        loginFrame.setTitle("ChatRoom");  // Nazwa okna
+        loginFrame.setTitle("ChatRoom"); // Nazwa okna
         loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Bez tego okno się nie zamyka
         loginFrame.setResizable(false);
         loginFrame.setVisible(true);
+
+        mainPanel.setLayout(new BorderLayout());
         mainPanel.setBackground(new Color(45, 116, 224));
-
     }
 
+    // Funkcja tworząca główną etykietę
+    public void createMainLabel() {
+        mainLabel.setFont(new Font("Tahoma", Font.BOLD, 20));
+        mainLabel.setForeground(new Color(219, 214, 61));
+        mainLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-    //Funkcja tworzaca etykiete
-    public void CreateLabel()
-    {
-        this.LoginLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
-        this.LoginLabel.setFont(this.LoginLabel.getFont().deriveFont(Font.BOLD, 20));
-        this.LoginLabel.setForeground(new Color(219, 214, 61));
-        this.LoginLabelPanel.add(this.LoginLabel);
-        LoginLabelPanel.setBackground(new Color(45, 116, 224));
-        this.mainPanel.add(this.LoginLabelPanel, BorderLayout.NORTH);
+        JPanel labelPanel = new JPanel(new BorderLayout());
+        labelPanel.setBackground(new Color(45, 116, 224));
+        labelPanel.add(mainLabel, BorderLayout.CENTER);
 
+        mainPanel.add(labelPanel, BorderLayout.NORTH);
     }
 
+    // Funkcja tworząca formularz logowania
+    public void createForm() {
+        formPanel.setLayout(new GridLayout(4, 1, 10, 10));
+        formPanel.setBackground(new Color(45, 116, 224));
+        formPanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
 
-    //Funkcja Tworzaca pole na login, dodaje obsluge klawisza enter
-    public void CreateLoginChatArea(){
+        // Login
+        loginLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+        loginLabel.setForeground(Color.WHITE);
+        login.setPreferredSize(new Dimension(550, 30));
+        formPanel.add(loginLabel);
+        formPanel.add(login);
 
-        this.login.setPreferredSize(new Dimension(550, 30));
-        this.login.setFont(new Font("Tahoma", Font.PLAIN, 12));
-        this.login.setForeground(Color.BLACK);
-        this.login.setBackground(Color.WHITE);
-        this.loginPanel.add(this.login);
-        this.loginPanel.setBackground(new Color(45, 116, 224));
-        this.mainPanel.add(this.loginPanel);
+        // Hasło
+        passwordLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+        passwordLabel.setForeground(Color.WHITE);
+        password.setPreferredSize(new Dimension(550, 30));
+        password.setEchoChar('*');
+        formPanel.add(passwordLabel);
+        formPanel.add(password);
 
-
-
-        //Obsluga klawisza enter
-        this.login.addKeyListener(new KeyListener() {
-            public void keyTyped(KeyEvent e) {}
-            public void keyPressed(KeyEvent e) {
-                switch(e.getKeyCode()) {
-                    case KeyEvent.VK_ENTER:
-                        login.setText(" ");
-                }
-            }
-
-            public void keyReleased(KeyEvent e) {}
-
-        });
-
-
-
-
+        mainPanel.add(formPanel, BorderLayout.CENTER);
     }
 
-    //Funkcja Tworzaca pole na haslo, dodaje obsluge klawisza enter
-    public void CreatePasswordChatArea()
-    {
-        this.password.setPreferredSize(new Dimension(550, 30));
-        this.password.setFont(new Font("Tahoma", Font.PLAIN, 12));
-        this.password.setForeground(Color.BLACK);
-        this.password.setBackground(Color.WHITE);
-        this.password.setEchoChar('*');
-        this.PasswordPanel.add(this.password);
-        this.PasswordPanel.setBackground(new Color(45, 116, 224));
+    // Funkcja tworząca przyciski
+    public void createButtons() {
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        buttonPanel.setBackground(new Color(45, 116, 224));
 
-        this.mainPanel.add(this.PasswordPanel);
+        loginButton.setPreferredSize(new Dimension(120, 40));
+        registerButton.setPreferredSize(new Dimension(120, 40));
 
-        this.password.addKeyListener(new KeyListener() {
-            public void keyTyped(KeyEvent e) {}
-            public void keyPressed(KeyEvent e) {
-                switch(e.getKeyCode()) {
-                    case KeyEvent.VK_ENTER:
-                        password.setText(" ");
-                }
-            }
+        buttonPanel.add(loginButton);
+        buttonPanel.add(registerButton);
 
-            public void keyReleased(KeyEvent e) {}
-
-        });
-
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
     }
-
-
-
-
 }
