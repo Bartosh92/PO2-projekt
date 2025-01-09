@@ -1,5 +1,6 @@
 package chatroom;
 
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -53,6 +54,7 @@ public class Server implements Runnable {
                 handler.shutdown();
             }
         } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -100,7 +102,14 @@ public class Server implements Runnable {
                         }
                         sendToAllClients(nick + " opuścił czat.");
                         shutdown();
-                    } else {
+                        break;
+                    }
+                    // Obsługa prywatnych wiadomości
+                    else if (message.startsWith("/priv")) {
+                        handlePrivateMessage(message);
+                    }
+                    // Wysyłanie wiadomości do wszystkich
+                    else {
                         sendToAllClients(nick + ": " + message);
                     }
                 }
@@ -114,6 +123,31 @@ public class Server implements Runnable {
             }
         }
 
+        // Obsługa prywatnych wiadomości
+        private void handlePrivateMessage(String message) {
+            String[] parts = message.split(" ", 3);
+            if (parts.length == 3) {
+                String recipient = parts[1];
+                String privateMessage = parts[2];
+                sendPrivateMessage(recipient, privateMessage);
+            } else {
+                out.println("Nieprawidłowy format wiadomości prywatnej.");
+            }
+        }
+
+        // Wysyłanie prywatnych wiadomości
+        private void sendPrivateMessage(String recipient, String message) {
+            for (ClientHandler handler : connections) {
+                if (handler.nick.equals(recipient)) {
+                    handler.sendMessage("(Priv od " + nick + "): " + message);
+                    out.println("(Ty do " + recipient + "): " + message);
+                    return;
+                }
+            }
+            out.println("Użytkownik " + recipient + " jest offline lub nie istnieje.");
+        }
+
+        // Aktualizacja listy użytkowników online
         private void updateUsersOnline() {
             StringBuilder userList = new StringBuilder("USERS_LIST:");
             for (String user : users) {
