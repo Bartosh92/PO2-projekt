@@ -1,5 +1,8 @@
 package org.example;
 
+import com.google.gson.Gson;
+import java.io.FileWriter;
+import java.io.IOException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -68,14 +71,14 @@ public class Login {
         formPanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
 
         // Login
-        loginLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+        loginLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
         loginLabel.setForeground(Color.WHITE);
         login.setPreferredSize(new Dimension(550, 30));
         formPanel.add(loginLabel);
         formPanel.add(login);
 
         // Hasło
-        passwordLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+        passwordLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
         passwordLabel.setForeground(Color.WHITE);
         password.setPreferredSize(new Dimension(550, 30));
         password.setEchoChar('*');
@@ -127,6 +130,9 @@ public class Login {
 
         System.out.println("Logowanie: " + username + ", Hasło: " + pass);
         JOptionPane.showMessageDialog(loginFrame, "Zalogowano pomyślnie!", "Sukces", JOptionPane.INFORMATION_MESSAGE);
+
+        // Zapisanie danych do pliku JSON
+        saveToJSON(username, pass);
     }
 
     // Funkcja obsługująca rejestrację
@@ -139,8 +145,34 @@ public class Login {
             return;
         }
 
-
         System.out.println("Rejestracja: " + username + ", Hasło: " + pass);
         JOptionPane.showMessageDialog(loginFrame, "Zarejestrowano pomyślnie!", "Sukces", JOptionPane.INFORMATION_MESSAGE);
+
+        // Zapisanie danych do pliku JSON
+        saveToJSON(username, pass);
+    }
+
+    // Funkcja zapisująca dane do pliku JSON
+    private void saveToJSON(String username, String password) {
+        Gson gson = new Gson();
+        User user = new User(username, password);
+
+        try (FileWriter writer = new FileWriter("user_data.json", true)) {
+            gson.toJson(user, writer);
+            writer.write("\n");  // Dodajemy nową linię po każdym zapisie
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Klasa do reprezentacji użytkownika w formacie JSON
+    class User {
+        String username;
+        String password;
+
+        public User(String username, String password) {
+            this.username = username;
+            this.password = password;
+        }
     }
 }
