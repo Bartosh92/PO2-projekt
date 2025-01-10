@@ -2,12 +2,12 @@ package org.example;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Login {
     JFrame loginFrame = new JFrame();
     JPanel mainPanel = new JPanel();
-    JPanel loginPanel = new JPanel();
-    JPanel passwordPanel = new JPanel();
     JPanel buttonPanel = new JPanel();
     JPanel formPanel = new JPanel();
 
@@ -27,6 +27,8 @@ public class Login {
         createForm();
         createButtons();
         loginFrame.add(mainPanel);
+
+        addListeners();
     }
 
     // Inicjalizacja i parametryzacja okna i paneli
@@ -83,7 +85,6 @@ public class Login {
         mainPanel.add(formPanel, BorderLayout.CENTER);
     }
 
-    // Funkcja tworząca przyciski
     public void createButtons() {
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
         buttonPanel.setBackground(new Color(45, 116, 224));
@@ -95,5 +96,51 @@ public class Login {
         buttonPanel.add(registerButton);
 
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+    }
+
+    // Funkcja dodająca obsługę przycisków
+    private void addListeners() {
+        loginButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleLogin();
+            }
+        });
+
+        registerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleRegister();
+            }
+        });
+    }
+
+    // Funkcja obsługująca logowanie
+    private void handleLogin() {
+        String username = login.getText().trim();
+        String pass = new String(password.getPassword()).trim();
+
+        if (username.isEmpty() || pass.isEmpty()) {
+            JOptionPane.showMessageDialog(loginFrame, "Wypełnij wszystkie pola!", "Błąd", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        System.out.println("Logowanie: " + username + ", Hasło: " + pass);
+        JOptionPane.showMessageDialog(loginFrame, "Zalogowano pomyślnie!", "Sukces", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    // Funkcja obsługująca rejestrację
+    private void handleRegister() {
+        String username = login.getText().trim();
+        String pass = new String(password.getPassword()).trim();
+
+        if (username.isEmpty() || pass.isEmpty()) {
+            JOptionPane.showMessageDialog(loginFrame, "Wypełnij wszystkie pola!", "Błąd", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+
+        System.out.println("Rejestracja: " + username + ", Hasło: " + pass);
+        JOptionPane.showMessageDialog(loginFrame, "Zarejestrowano pomyślnie!", "Sukces", JOptionPane.INFORMATION_MESSAGE);
     }
 }
