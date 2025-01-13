@@ -29,7 +29,7 @@ public class Chat {
         this.chatArea.setSize(new Dimension(600, 120));
         this.chatArea.setLineWrap(true); // Ustawia zwijanie tekstu, gdy tekst jest na końcu ekranu aplikacji
         this.chatArea.setFocusTraversalKeysEnabled(false); //Wyłącza możliwość używania klawiszy nawigacji, takich jak Tab, Shift + Tab, Enter
-        this.chatArea.setFont(new Font("Serif", Font.PLAIN, 22));
+        this.chatArea.setFont(new Font("Tahoma", Font.PLAIN, 22));
         this.chatArea.setBackground(new Color(	249, 234, 225));
 
         // Rejestracja KeyboardHandling jako nasłuchiwacza
