@@ -1,12 +1,16 @@
 package org.example;
 
 import com.google.gson.Gson;
-import java.io.FileWriter;
-import java.io.IOException;
+import com.google.gson.reflect.TypeToken;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Login {
     JFrame loginFrame = new JFrame();
@@ -24,6 +28,8 @@ public class Login {
     JButton loginButton = new JButton("Zaloguj");
     JButton registerButton = new JButton("Zarejestruj");
 
+    private static final String DATA_FILE = "user_data.json";
+
     public Login() {
         initializeWindow();
         createMainLabel();
@@ -34,7 +40,6 @@ public class Login {
         addListeners();
     }
 
-    // Inicjalizacja i parametryzacja okna i paneli
     public void initializeWindow() {
         this.loginFrame.setSize(600, 400);
         Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -42,8 +47,8 @@ public class Login {
         int x = (int) ((screenSize.getWidth() - loginFrame.getWidth()) / 2);
         int y = (int) ((screenSize.getHeight() - loginFrame.getHeight()) / 2);
         loginFrame.setLocation(x, y);
-        loginFrame.setTitle("ChatRoom"); // Nazwa okna
-        loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Bez tego okno się nie zamyka
+        loginFrame.setTitle("ChatRoom");
+        loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         loginFrame.setResizable(false);
         loginFrame.setVisible(true);
 
@@ -51,7 +56,6 @@ public class Login {
         mainPanel.setBackground(new Color(45, 116, 224));
     }
 
-    // Funkcja tworząca główną etykietę
     public void createMainLabel() {
         mainLabel.setFont(new Font("Tahoma", Font.BOLD, 20));
         mainLabel.setForeground(new Color(219, 214, 61));
@@ -64,20 +68,17 @@ public class Login {
         mainPanel.add(labelPanel, BorderLayout.NORTH);
     }
 
-    // Funkcja tworząca formularz logowania
     public void createForm() {
         formPanel.setLayout(new GridLayout(4, 1, 10, 10));
         formPanel.setBackground(new Color(45, 116, 224));
         formPanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
 
-        // Login
         loginLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
         loginLabel.setForeground(Color.WHITE);
         login.setPreferredSize(new Dimension(550, 30));
         formPanel.add(loginLabel);
         formPanel.add(login);
 
-        // Hasło
         passwordLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
         passwordLabel.setForeground(Color.WHITE);
         password.setPreferredSize(new Dimension(550, 30));
@@ -101,7 +102,6 @@ public class Login {
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    // Funkcja dodająca obsługę przycisków
     private void addListeners() {
         loginButton.addActionListener(new ActionListener() {
             @Override
@@ -118,7 +118,6 @@ public class Login {
         });
     }
 
-    // Funkcja obsługująca logowanie
     private void handleLogin() {
         String username = login.getText().trim();
         String pass = new String(password.getPassword()).trim();
@@ -128,14 +127,14 @@ public class Login {
             return;
         }
 
-        System.out.println("Logowanie: " + username + ", Hasło: " + pass);
-        JOptionPane.showMessageDialog(loginFrame, "Zalogowano pomyślnie!", "Sukces", JOptionPane.INFORMATION_MESSAGE);
-
-        // Zapisanie danych do pliku JSON
-        saveToJSON(username, pass);
+        if (validateCredentials(username, pass)) {
+            JOptionPane.showMessageDialog(loginFrame, "Zalogowano pomyślnie!", "Sukces", JOptionPane.INFORMATION_MESSAGE);
+            loginFrame.dispose(); // Zamyka okno logowania
+        } else {
+            JOptionPane.showMessageDialog(loginFrame, "Nieprawidłowy login lub hasło!", "Błąd", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
-    // Funkcja obsługująca rejestrację
     private void handleRegister() {
         String username = login.getText().trim();
         String pass = new String(password.getPassword()).trim();
@@ -145,27 +144,43 @@ public class Login {
             return;
         }
 
-        System.out.println("Rejestracja: " + username + ", Hasło: " + pass);
-        JOptionPane.showMessageDialog(loginFrame, "Zarejestrowano pomyślnie!", "Sukces", JOptionPane.INFORMATION_MESSAGE);
-
-        // Zapisanie danych do pliku JSON
         saveToJSON(username, pass);
+        JOptionPane.showMessageDialog(loginFrame, "Zarejestrowano pomyślnie!", "Sukces", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    // Funkcja zapisująca dane do pliku JSON
     private void saveToJSON(String username, String password) {
         Gson gson = new Gson();
-        User user = new User(username, password);
+        List<User> users = loadUsers();
 
-        try (FileWriter writer = new FileWriter("user_data.json", true)) {
-            gson.toJson(user, writer);
-            writer.write("\n");  // Dodajemy nową linię po każdym zapisie
+        users.add(new User(username, password));
+
+        try (FileWriter writer = new FileWriter(DATA_FILE)) {
+            gson.toJson(users, writer);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    // Klasa do reprezentacji użytkownika w formacie JSON
+    private boolean validateCredentials(String username, String password) {
+        List<User> users = loadUsers();
+        for (User user : users) {
+            if (user.username.equals(username) && user.password.equals(password)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private List<User> loadUsers() {
+        Gson gson = new Gson();
+        try (Reader reader = new FileReader(DATA_FILE)) {
+            Type userListType = new TypeToken<ArrayList<User>>() {}.getType();
+            return gson.fromJson(reader, userListType);
+        } catch (IOException e) {
+            return new ArrayList<>();
+        }
+    }
+
     class User {
         String username;
         String password;
