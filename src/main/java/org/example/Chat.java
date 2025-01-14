@@ -69,6 +69,10 @@ public class Chat {
         this.chat_panel.add(new JScrollPane(this.chatArea), BorderLayout.CENTER);
     }
 
+    public void clearChat() {
+        this.MessageArea.setText(""); // Czyści obszar wyświetlania wiadomości
+        renderPanel(); // Odświeża widok panelu
+    }
 
 
 

@@ -107,6 +107,11 @@ public class Server implements Runnable {
                     else if (message.startsWith("/priv")) {
                         handlePrivateMessage(message);
                     }
+                    else if (message.startsWith("/nickname")) {
+                        handleNicknameChange(message);
+                    }
+
+
                     // Wysyłanie wiadomości do wszystkich
                     else {
                         sendToAllClients(nick + ": " + message);
@@ -134,6 +139,9 @@ public class Server implements Runnable {
             }
         }
 
+
+
+
         // Wysyłanie prywatnych wiadomości
         private void sendPrivateMessage(String recipient, String message) {
             for (ClientHandler handler : connections) {
@@ -144,6 +152,26 @@ public class Server implements Runnable {
                 }
             }
             out.println("Użytkownik " + recipient + " jest offline lub nie istnieje.");
+        }
+        private void handleNicknameChange(String message) {
+            String[] parts = message.split(" ", 2);
+            if (parts.length == 2) {
+                String newNick = parts[1].trim();
+                synchronized (users) {
+                    if (!users.contains(newNick)) {
+                        sendToAllClients(nick + " zmienia nick na " + newNick);
+                        users.remove(nick);
+                        users.add(newNick);
+                        nick = newNick;
+                        updateUsersOnline();
+                        out.println("Twój nick został zmieniony na: " + newNick);
+                    } else {
+                        out.println("Nick " + newNick + " jest już zajęty!");
+                    }
+                }
+            } else {
+                out.println("Niepoprawne użycie komendy. Użyj: /nickname <nowy_nick>");
+            }
         }
 
         // Aktualizacja listy użytkowników online
