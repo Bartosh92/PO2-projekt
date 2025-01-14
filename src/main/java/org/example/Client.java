@@ -29,7 +29,7 @@ public class Client implements Runnable {
 
             String inMessage;
             while ((inMessage = in.readLine()) != null) {
-                System.out.println(inMessage);
+                //System.out.println(inMessage);
                 if (inMessage.startsWith("USERS_LIST:")) {
                     String[] users = inMessage.substring(11).split(",");
                     ArrayList<String> userList = new ArrayList<>(Arrays.asList(users));
