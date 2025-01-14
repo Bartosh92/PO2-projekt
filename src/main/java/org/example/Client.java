@@ -80,6 +80,8 @@ public class Client implements Runnable {
         gui.getChat().clearChat(); // Wywołanie metody czyszczenia czatu w GUI
     }
 
+
+
     public static void main(String[] args) {
         Client client = new Client();
         client.run();

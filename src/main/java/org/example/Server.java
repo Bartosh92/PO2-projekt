@@ -24,6 +24,8 @@ public class Server implements Runnable {
         isRunning = true;
     }
 
+
+
     @Override
     public void run() {
         try {
@@ -76,6 +78,10 @@ public class Server implements Runnable {
             this.client = client;
         }
 
+        public String get_nick(){
+            return nick;
+        }
+
         @Override
         public void run() {
             try {
@@ -125,6 +131,8 @@ public class Server implements Runnable {
                 sendToAllClients(nick + " opuścił czat.");
                 shutdown();
             }
+
+
         }
 
         // Obsługa prywatnych wiadomości
@@ -198,7 +206,11 @@ public class Server implements Runnable {
                 e.printStackTrace();
             }
         }
+
+
     }
+
+
 
     public static void main(String[] args) {
         Server server = new Server();
