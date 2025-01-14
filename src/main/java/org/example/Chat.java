@@ -3,6 +3,7 @@ package org.example;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
+import javax.swing.JButton;
 
 //Klasa służąca do stworzenia chatboxa
 
@@ -12,6 +13,7 @@ public class Chat {
     private JPanel chat_panel = new JPanel(); //Główny panel chatu, w którym znajdują się pozostałe obiekty
     private JPanel message_panel = new JPanel(); // Panel w którym znajduje się obszar wyświetlanych wiadomości
     private Client client;
+    private JButton clearButton = new JButton("Wyczyść czat");
 
     public Chat(Client client){
         this.client = client;
@@ -19,6 +21,7 @@ public class Chat {
         createMessagePanel();
         createChatPanel();
         createMessageArea();
+        addClearButton(); // Dodaj przycisk
         renderPanel();
     }
 
@@ -29,7 +32,7 @@ public class Chat {
         this.chatArea.setSize(new Dimension(600, 120));
         this.chatArea.setLineWrap(true); // Ustawia zwijanie tekstu, gdy tekst jest na końcu ekranu aplikacji
         this.chatArea.setFocusTraversalKeysEnabled(false); //Wyłącza możliwość używania klawiszy nawigacji, takich jak Tab, Shift + Tab, Enter
-        this.chatArea.setFont(new Font("Serif", Font.PLAIN, 22));
+        this.chatArea.setFont(new Font("Tahoma", Font.PLAIN, 22));
         this.chatArea.setBackground(new Color(	249, 234, 225));
 
         // Rejestracja KeyboardHandling jako nasłuchiwacza
@@ -69,6 +72,16 @@ public class Chat {
         this.chat_panel.add(new JScrollPane(this.chatArea), BorderLayout.CENTER);
     }
 
+    private void addClearButton() {
+        clearButton.setPreferredSize(new Dimension(150, 30));
+        clearButton.addActionListener(e -> clearChat()); // Powiązanie z akcją
+        chat_panel.add(clearButton, BorderLayout.SOUTH); // Dodanie do panelu
+    }
+
+    public void clearChat() {
+        this.MessageArea.setText(""); // Czyści obszar wyświetlania wiadomości
+        renderPanel(); // Odświeża widok panelu
+    }
 
 
 

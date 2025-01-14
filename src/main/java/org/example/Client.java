@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
+import javax.swing.JOptionPane;
 
 public class Client implements Runnable {
 
@@ -37,8 +38,17 @@ public class Client implements Runnable {
                 } else if (inMessage.endsWith("opuscil pokoj!")) {
                     String userLeaving = inMessage.split(" ")[0];
                     gui.users_online.removeUser(userLeaving);
-                } else {
+                }else if (inMessage.startsWith("Twój nick został zmieniony na: ")) {
+                    String newNick = inMessage.substring(27); // Pobiera nowy nick z wiadomości
+                    System.out.println("Nowy nick: " + newNick);
+                    JOptionPane.showMessageDialog(gui.frame, "Twój nick został zmieniony na: " + newNick, "Zmiana nicku", JOptionPane.INFORMATION_MESSAGE);
+                }
+                else {
                     gui.getChat().getMessageArea().append(inMessage + "\n");
+                    if (gui.isMinimized()) {
+                        SoundPlayer.playNotificationSound("src/main/java/resources/gg.wav");
+                    }
+
                 }
             }
         } catch (IOException e) {
@@ -65,6 +75,9 @@ public class Client implements Runnable {
             e.printStackTrace();
         }
         isRunning = false;
+    }
+    public void clearChat() {
+        gui.getChat().clearChat(); // Wywołanie metody czyszczenia czatu w GUI
     }
 
     public static void main(String[] args) {

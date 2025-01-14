@@ -17,7 +17,9 @@ public class KeyboardHandling implements KeyListener {
             case KeyEvent.VK_ENTER:
                 client.sendMessageToServer(); // Wywołuje metodę wysyłającą wiadomość do serwera
                 break;
+
         }
+
     }
 
     @Override
