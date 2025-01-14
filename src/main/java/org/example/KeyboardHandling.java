@@ -17,9 +17,7 @@ public class KeyboardHandling implements KeyListener {
             case KeyEvent.VK_ENTER:
                 client.sendMessageToServer(); // Wywołuje metodę wysyłającą wiadomość do serwera
                 break;
-            case KeyEvent.VK_RIGHT:
-                client.clearChat(); // Wywołuje metodę do czyszczenia czatu
-                break;
+
         }
 
     }
