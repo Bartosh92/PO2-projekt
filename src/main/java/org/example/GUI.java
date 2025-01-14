@@ -46,4 +46,7 @@ public class GUI {
         frame.setVisible(false);
         frame.dispose();
     }
+    public boolean isMinimized() {
+        return frame.getState() == Frame.ICONIFIED;
+    }
 }

@@ -39,6 +39,9 @@ public class Client implements Runnable {
                     gui.users_online.removeUser(userLeaving);
                 } else {
                     gui.getChat().getMessageArea().append(inMessage + "\n");
+                    if (gui.isMinimized()) {
+                        SoundPlayer.playNotificationSound("src/main/java/resources/gg.wav");
+                    }
                 }
             }
         } catch (IOException e) {
