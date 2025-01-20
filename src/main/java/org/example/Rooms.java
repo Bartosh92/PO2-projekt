@@ -19,7 +19,7 @@ public class Rooms {
                 super.paintComponent(g);
                 Graphics2D g2d = (Graphics2D) g;
                 // Ustawienie gradientu
-                GradientPaint gradient = new GradientPaint(0, 0, new Color(132, 175, 245), getWidth(), getHeight(), new Color(219, 214, 61));
+                GradientPaint gradient = new GradientPaint(0, 0, new Color(132, 175, 245), getWidth(), getHeight(), new Color(34, 72, 209));
                 g2d.setPaint(gradient);
                 g2d.fillRect(0, 0, getWidth(), getHeight());
             }

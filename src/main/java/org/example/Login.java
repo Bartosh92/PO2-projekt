@@ -1,5 +1,4 @@
 package org.example;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -9,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.lang.reflect.Type;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -152,7 +153,9 @@ public class Login {
         Gson gson = new Gson();
         List<User> users = loadUsers();
 
-        users.add(new User(username, password));
+        // Hashowanie hasła przed zapisaniem
+        String hashedPassword = hashPassword(password);
+        users.add(new User(username, hashedPassword));
 
         try (FileWriter writer = new FileWriter(DATA_FILE)) {
             gson.toJson(users, writer);
@@ -163,8 +166,10 @@ public class Login {
 
     private boolean validateCredentials(String username, String password) {
         List<User> users = loadUsers();
+        String hashedPassword = hashPassword(password);
+
         for (User user : users) {
-            if (user.username.equals(username) && user.password.equals(password)) {
+            if (user.username.equals(username) && user.password.equals(hashedPassword)) {
                 return true;
             }
         }
@@ -178,6 +183,20 @@ public class Login {
             return gson.fromJson(reader, userListType);
         } catch (IOException e) {
             return new ArrayList<>();
+        }
+    }
+
+    private String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hashedBytes = md.digest(password.getBytes());
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashedBytes) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Nie znaleziono algorytmu SHA-256", e);
         }
     }
 
